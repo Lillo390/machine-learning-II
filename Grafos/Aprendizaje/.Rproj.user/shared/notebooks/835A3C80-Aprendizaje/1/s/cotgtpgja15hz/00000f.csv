@@ -1,0 +1,7 @@
+"0","library(bnlearn)"
+"0","dag<-model2network(""[A][S][E|A:S][O|E][R|E][T|O:R]"")"
+"0","bnlearn::score(dag, data = survey, type = ""bic"")#Bayesian Information criterion (BIC)"
+"1","[1]"
+"1"," -2012.687"
+"1","
+"

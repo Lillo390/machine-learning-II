@@ -1,0 +1,10 @@
+"0","library(readr)"
+"0","DARWIN <- read_csv(""data/DARWIN.csv"")"
+"2","[1mRows: [22m[34m174[39m [1mColumns: [22m[34m452[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m─────────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m   (2): ID, class
+[32mdbl[39m (450): air_time1, disp_index1, gmrt_in_air1, gmrt_on_paper1, max_x_extension1, max_y_extension1, mean_acc_in_air1, mean_acc_on_pa..."
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."

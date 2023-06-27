@@ -1,0 +1,204 @@
+---
+title: "Clasificador basado en reglas Mushroom"
+subtitle: "Aprendizaje Máquina II"
+author: "Máster Ciencia Datos- UV"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# Datos
+
+**Mushroom Data Set**
+
+<https://archive.ics.uci.edu/ml/datasets/mushroom>
+
+Mushroom records drawn from The Audubon Society Field Guide to North
+American Mushrooms (1981). G. H. Lincoff (Pres.), New York: Alfred A.
+Knopf
+
+```{r}
+rm(list=ls())
+load(file="mushroom.RData")
+```
+
+## Distribución de la clase 
+
+**Comprueba que la distribución de las setas es:**
+
+-- edible: 4208 (51.8%)
+
+-- poisonous: 3916 (48.2%)
+
+-- total: 8124 instances
+
+```{r}
+prop.table(table(mushroom$class))
+
+```
+
+## Data Set Information
+
+This data set includes descriptions of hypothetical samples
+corresponding to 23 species of gilled mushrooms in the Agaricus and
+Lepiota Family. Each species is identified as definitely edible,
+definitely poisonous, or of unknown edibility and not recommended. This
+latter class was combined with the poisonous one. The Guide clearly
+states that there is no simple rule for determining the edibility of a
+mushroom; no rule like \`\`leaflets three, let it be'' for Poisonous Oak
+and Ivy.
+
+Variables
+
+1\. cap-shape: bell=b,conical=c,convex=x,flat=f, knobbed=k,sunken=s
+
+2\. cap-surface: fibrous=f,grooves=g,scaly=y,smooth=s
+
+3\. cap-color: brown=n,buff=b,cinnamon=c,gray=g,green=r,
+pink=p,purple=u,red=e,white=w,yellow=y
+
+4\. bruises?: bruises=t,no=f
+
+5\. odor: almond=a, anise=l, creosote=c, fishy=y, foul=f, musty=m,
+none=n, pungent=p, spicy=s
+
+6\. gill-attachment: attached=a,descending=d,free=f,notched=n
+
+7\. gill-spacing: close=c,crowded=w,distant=d
+
+8\. gill-size: broad=b,narrow=n
+
+9\. gill-color: black=k,brown=n,buff=b,chocolate=h,gray=g,
+green=r,orange=o,pink=p,purple=u,red=e, white=w,yellow=y
+
+10\. stalk-shape: enlarging=e,tapering=t
+
+11\. stalk-root: bulbous=b,club=c,cup=u,equal=e,
+rhizomorphs=z,rooted=r,missing=?
+
+12\. stalk-surface-above-ring: fibrous=f,scaly=y,silky=k,smooth=s
+
+13\. stalk-surface-below-ring: fibrous=f,scaly=y,silky=k,smooth=s
+
+14\. stalk-color-above-ring: brown=n,buff=b,cinnamon=c,gray=g,orange=o,
+pink=p,red=e,white=w,yellow=y
+
+15\. stalk-color-below-ring: brown=n,buff=b,cinnamon=c,gray=g,orange=o,
+pink=p,red=e,white=w,yellow=y
+
+16\. veil-type: partial=p,universal=u
+
+17\. veil-color: brown=n,orange=o,white=w,yellow=y
+
+18\. ring-number: none=n,one=o,two=t
+
+19\. ring-type: cobwebby=c,evanescent=e,flaring=f,large=l,
+none=n,pendant=p,sheathing=s,zone=z
+
+20\. spore-print-color: black=k,brown=n,buff=b,chocolate=h,green=r,
+orange=o,purple=u,white=w,yellow=y
+
+21\. population: abundant=a,clustered=c,numerous=n,
+scattered=s,several=v,solitary=y
+
+22\. habitat: grasses=g,leaves=l,meadows=m,paths=p,
+urban=u,waste=w,woods=d
+
+**Comprueba que todas las variables con de tipo cualitativo.**
+
+```{r}
+all(sapply(mushroom,is.factor))
+```
+
+# Train & Test
+
+Utiliza la función `createDataPartition` de la librería `caret` para
+separar el conjunto de datos en 80% de los datos para entrenamiento y
+20% para test. Crea el vector `trainIndex` con los índices de los
+registros para entreamiento
+
+```{r}
+library(caret, quietly = TRUE)
+set.seed(666)
+trainIndex <- createDataPartition(mushroom$class,p=0.8,times=1,list=F)
+
+```
+
+# Clasificador basado en reglas
+
+## OneR
+
+```{r}
+library(OneR)
+model_OneR <- OneR(class~.,data=mushroom[trainIndex,])
+summary(model_OneR)
+```
+
+Evaluamos el modelo OneR sobre los conjuntos de entrenamiento y test
+
+```{r}
+class_hat_train <- predict(model_OneR,newdata=mushroom[trainIndex,])
+class_hat_test <- predict(model_OneR,newdata=mushroom[-trainIndex,])
+```
+
+```{r}
+
+confusionMatrix(class_hat_train,mushroom$class[trainIndex])
+confusionMatrix(class_hat_test,mushroom$class[-trainIndex])
+```
+
+## CBA
+
+Candidate classification association rules (CARs) are mined with the
+standard APRIORI algorithm. Rules are ranked by confidence, support and
+size. Then either the M1 or M2 algorithm are used to perform database
+coverage pruning and to determin the number of rules to use and the
+default class.
+
+```{r}
+library(arules)
+library(arulesCBA)
+#mushroomt<-as(mushroom,"transactions") #curiosidad
+```
+
+```{r}
+model_CBA <- CBA(class~., mushroom[trainIndex,])
+summary(model_CBA)
+inspect(model_CBA$rules) 
+```
+
+Número de reglas que predicen cada clase
+
+```{r}
+inspect(subset(model_CBA$rules,subset=rhs %pin% c('e')))
+
+inspect(subset(model_CBA$rules,subset=rhs %pin% c('p')))
+```
+
+Inspecciona las reglas con más Suporte y Confianza
+
+```{r}
+model_CBA <- CBA(class~., mushroom[trainIndex,],parameter = c(support=0.25,confidence=1),appearance='odor')
+summary(model_CBA)
+inspect(model_CBA$rules) 
+```
+
+Visualiza las reglas
+
+```{r}
+#rules.to.plot<-
+library(arulesViz)
+plot(model_CBA$rules,method='graph',engine='htmlwidget')
+```
+
+Evaluamos el modelo CBA sobre los conjuntos de entrenamiento y test
+
+```{r}
+class_hat_train <- predict(model_CBA,newdata=mushroom[trainIndex,])
+class_hat_test <- predict(model_CBA,newdata=mushroom[-trainIndex,])
+
+confusionMatrix(class_hat_train,mushroom$class[trainIndex])
+confusionMatrix(class_hat_test,mushroom$class[-trainIndex])
+```
+

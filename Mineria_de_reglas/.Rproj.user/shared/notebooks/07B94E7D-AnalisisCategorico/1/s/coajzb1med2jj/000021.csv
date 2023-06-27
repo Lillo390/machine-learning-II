@@ -1,0 +1,4 @@
+"0","sunspots.discrete <- discretize(x,method='interval',categories=3)"
+"2","Warning: Parameter categories is deprecated. Use breaks instead! Also, the default method is now frequency!"
+"0","plot(as.numeric(sunspots),pch='o',col=as.numeric(sunspots.discrete))"
+"0",""

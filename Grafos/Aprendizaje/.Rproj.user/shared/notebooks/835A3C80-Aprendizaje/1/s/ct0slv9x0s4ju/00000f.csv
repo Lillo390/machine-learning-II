@@ -1,0 +1,5 @@
+"0","dag<-model2network(""[A][S][E|A:S][O|E][R|E][T|O:R]"")"
+"0","data<-survey"
+"0","#Grow-Shrink (GS)"
+"0","bn.gs<-gs(data, test=""mi"",debug=F)"
+"0","graphviz.plot(bn.gs)"

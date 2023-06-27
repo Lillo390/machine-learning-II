@@ -1,0 +1,9 @@
+"0","```r
+querygrain(jt.Ehigh,nodes=c('T','S'),type='conditional')
+```"
+"1","       S
+T            M      F
+  car   0.5594 0.5594
+  train 0.2835 0.2835
+  other 0.1571 0.1571
+"

@@ -1,0 +1,9 @@
+"0","```r
+querygrain(jt,nodes=c('T','R'),type='conditional')
+```"
+"1","       R
+T            small       big
+  car   0.48388675 0.5860818
+  train 0.41708494 0.2384796
+  other 0.09902831 0.1754387
+"

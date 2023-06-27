@@ -1,0 +1,6 @@
+"0","library(bnlearn)"
+"2","Warning: package ‘bnlearn’ was built under R version 4.2.2"
+"0","dag<-model2network(""[A][S][E|A:S][O|E][R|E][T|O:R]"")"
+"0","graphviz.plot(dag)"
+"2","Loading required namespace: Rgraphviz
+"

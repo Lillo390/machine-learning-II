@@ -1,0 +1,165 @@
+---
+title: "Análisis de variables categóricas"
+subitle: "Máster Oficial Ciencia Datos- UV"
+output:
+  html_notebook:
+    toc: yes
+---
+
+# Análisis de variables categóricas
+
+## Nominal y ordinal
+
+A partir del vector `x` genera una variable de tipo nominal y otra de tipo ordinal. Describe estadísticamente las variables.
+
+```{r}
+set.seed(666)
+x<-sample(1:3,50,replace = TRUE)
+#solucion
+
+```
+
+## Codificación basado en el objetivo
+
+Codifica numéricamente las variables `cut`, `color` y `clarity` en una única variable considerando el promedio con respecto a variable `price` del conjunto `diamonds.` ¿cuántas variables has ahorrado al modelo con respecto al *one-hot-enconding*?
+
+```{r}
+library(tidyverse,quietly = T)
+library(dplyr)
+data(diamonds)
+str(diamonds)
+#solution
+
+diamonds %>% group_by(cut,color,clarity) %>% mutate(cod_price=mean(price))
+
+```
+
+## Discretización No Supervisada
+
+Utiliza la función `discretize` del paquete `arules` para probar diferentes discretizaciones para la serie de actividad solar. ¿Cuál es la más apropiada?
+
+`discretize(x, method="interval", categories = 3, labels = NULL, ordered=FALSE, onlycuts=FALSE, ...)`
+
+```{r}
+library(arules)
+data(sunspots)  #                       Monthly Sunspot Numbers, 1749-1983
+str(sunspots)
+plot(sunspots) 
+hist(sunspots)
+
+#solution
+x <- sunspots
+hist(x,breaks=20,main="Equal Interval Length")
+abline(v=discretize(x,method='interval',categories=3,onlycuts=TRUE),col='red')
+sunspots.discrete <- discretize(x,method='interval',categories=3)
+plot(as.numeric(sunspots),pch='o',col=as.numeric(sunspots.discrete))
+
+```
+```{r}
+x <- sunspots
+hist(x,breaks=20,main="Frequency Interval Length")
+abline(v=discretize(x,method='frequency',categories=3,onlycuts=TRUE),col='red')
+sunspots.discrete <- discretize(x,method='frequency',categories=3)
+plot(as.numeric(sunspots),pch='o',col=as.numeric(sunspots.discrete))
+```
+```{r}
+x <- sunspots
+hist(x,breaks=20,main="Frequency Interval Length")
+abline(v=discretize(x,method='cluster',categories=3,onlycuts=TRUE),col='red')
+sunspots.discrete <- discretize(x,method='cluster',categories=3)
+plot(as.numeric(sunspots),pch='o',col=as.numeric(sunspots.discrete))
+```
+
+## Discretización Supervisada
+
+Del paquete `OneR` utiliza la función `optbin` para discretizar la variables del conjunto `iris`.
+
+`optbin(formula, data, method = c("logreg", "infogain", "naive"), na.omit = TRUE, ...)`
+
+```{r}
+data(iris)
+library(OneR)
+#solucion
+iris.discrete<-optbin(formula=Species~.,iris, method = c("logreg"), na.omit = TRUE)
+
+table(iris.discrete$Sepal.Length,iris.discrete$Species)
+```
+
+## Valores perdidos de variables categóricas, nominales y ordinales.
+
+Utiliza la función `mice` y `complete` para recuperar los valores perdidos del `data.frame` ***titanic.raw***. Elige el método de recuperación adecuado para el tipo de variable. Comprueba el acierto en la recuperación mediante el coeficiente kappa del paquete `DescTools`.
+
+```{r}
+#library(missForest)
+#titanic.raw.miss<-prodNA(titanic.raw,noNA = 0.1)
+#save(titanic.raw.miss,file="titanic.raw.miss.RData")
+library(mice)
+library(VIM)
+load('titanic.raw.rdata')
+load(file="titanic.raw.miss.RData")
+summary(titanic.raw.miss)
+md.pattern(titanic.raw.miss)
+aggr_plot <- aggr(titanic.raw.miss)
+
+#solution
+aux<-mice(titanic.raw.miss,seed=666,m=1,diagnositics=TRUE)
+titanic.raw.restored<-complete(aux)
+
+library(DescTools)
+
+k1 <- titanic.raw$Class[is.na(titanic.raw.miss$Class)]
+k2 <- titanic.raw.restored$Class[is.na(titanic.raw.miss$Class)]
+CohenKappa(x=k1,y=k2,conf.level = .95)
+table(k1,k2)
+
+```
+
+## Tablas de contingencia
+
+Utilizando la instrucción `xtabs` crea matrices de contingencia para explorar el contenido del conjunto de datos `titanic.raw.rdata`. Comprueba que obtienes los mismos resultados que con la instrucción `table` y además obtienes información de independencia mediante `summary` (`chisq.test()`).
+
+`xtabs(formula = ~., data =)` `prop.table(x, margin = NULL)`
+
+```{r}
+load('titanic.raw.rdata')
+#mytable <- table(A,B) # A will be rows, B will be columns
+
+#solution 
+
+
+```
+
+Comprueba la independencia de las variables mediante `chisq.test()` con la supervivencia y ordena las variables según su grado de independencia (p.value) con la variable `Survived` .
+
+```{r}
+
+#solution
+
+```
+
+Utiliza el paquete `vcd` para crear gráficos de `mosaic` que compruebe las suposiciones de dependencia con la variable `Survived`.
+
+```{r}
+library(vcd) 
+
+#solucion
+
+```
+
+Prueba a representar las Tablas de contingencia de más de 2 variables con `ftable`.
+
+```{r}
+
+#solution
+
+```
+
+## Gráficos de asociación
+
+Estudia el siguiente ejemplo e interpreta el gráfico de asociación.
+
+```{r}
+# Association Plot Example
+library(vcd)
+assoc(HairEyeColor, shade=TRUE)
+```

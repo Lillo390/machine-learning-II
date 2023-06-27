@@ -1,0 +1,2 @@
+"0","x <- sunspots"
+"0","hist(x,breaks=20,main=""Frequency Interval Length"")"

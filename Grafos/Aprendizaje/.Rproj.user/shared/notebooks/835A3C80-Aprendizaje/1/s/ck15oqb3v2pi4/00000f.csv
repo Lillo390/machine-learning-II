@@ -1,0 +1,6 @@
+"0","rnd <- random.graph(nodes = c(""A"", ""S"", ""E"", ""O"", ""R"", ""T""))"
+"0","modelstring(rnd)"
+"1","[1]"
+"1"," ""[A][S|A][E|A][O|A:E][R|S:E:O][T|E:O]"""
+"1","
+"

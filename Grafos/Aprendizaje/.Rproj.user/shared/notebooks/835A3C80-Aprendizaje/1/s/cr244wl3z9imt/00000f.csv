@@ -1,0 +1,2 @@
+"0","dag<-model2network(""[A][S][E|A:S][O|E][R|E][T|O:R]"")"
+"0","graphviz.plot(dag, shape = ""ellipse"")"

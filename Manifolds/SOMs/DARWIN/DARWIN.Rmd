@@ -1,0 +1,63 @@
+---
+title: "DARWIN"
+author: "Daniel Lillo Plaza y Carlos Blom-Dahl"
+date: "2023-02-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(readr)
+DARWIN <- read_csv("data/DARWIN.csv")
+```
+
+```{r}
+library(dplyr)
+
+y <- DARWIN$class
+
+DF <- DARWIN %>% select(-c(ID,class))
+
+DF <- scale(DF)
+
+```
+
+```{r}
+cor_matrix<-cor(DF)
+e<-eigen(cor_matrix)
+print(e[[1]][1]/e[[1]][2])
+```
+
+
+```{r}
+library(aweSOM)
+
+set.seed(0)
+### Initialization (PCA grid)
+init <- somInit(DF, 15, 5)
+DF_som <- kohonen::som(DF, grid = kohonen::somgrid(15, 5, "rectangular"), 
+                         rlen = 100, alpha = c(0.05, 0.01), radius = c(2.65,-2.65),
+                         dist.fcts = "sumofsquares", init = init)
+
+```
+
+```{r}
+num <- somQuality(DF_som, DF)
+
+print(num$err.quant)
+print(num$err.kaski)
+print(num$err.topo)
+print(num$err.varratio)
+
+```
+
+```{r}
+
+```
+
+

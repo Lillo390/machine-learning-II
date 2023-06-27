@@ -1,0 +1,118 @@
+---
+title: "Inferencia & Aprendizaje"
+output:
+  html_document:
+    toc: yes
+    df_print: paged
+  html_notebook:
+    toc: yes
+---
+
+# Inferencia
+
+## Separación Directa (D-Separación) e Independencia
+
+Comprueba que los nodos S y R no están separados `dsep` (independientes) porque existe un camino `path.exists` que los vincula. Cuando observamos los nodos intermedios en el camino, entonces serán independientes.
+
+```{r}
+library(bnlearn)
+library(Rgraphviz)
+#dag<-dag(bn)
+dag<-model2network("[A][S][E|A:S][O|E][R|E][T|O:R]")
+graphviz.plot(dag)
+path.exists(dag,from='S',to='R')
+dsep(dag,x='S',y='R') # True si son independientes, False si son dependientes
+```
+
+Explica los siguientes resultados observando el grafo.
+
+```{r}
+path.exists(dag,from="A",to="S")
+dsep(dag, x="A",y="S")
+dsep(dag, x="A",y="S",z="E")
+
+path.exists(dag,from="O",to="R")
+dsep(dag, x="O",y="R")
+dsep(dag, x="O",y="R",z="E")
+dsep(dag, x="O",y="R",z=c("E","T"))
+```
+
+## Inferencia Exacta
+
+### junction tree
+
+Crea el árbol de inferencia `junction tree` para acelerar los cálculos de las probabilidades condicionadas de manera exacta.
+
+```{r}
+library(gRain)
+load("BNsurvey.RData")
+jt <- compile(as.grain(bn)) # bn esta generada con la libreria bnlearn y necesitamos convertirla a gRain
+```
+
+### Razonamiento sin Evidencias
+
+Para el razonamiento se utiliza la función `querygrain` y el tipo de inferencia puede ser "marginal", "joint" o "conditional".
+
+Obtén la probabilidad de cada tipo de transporte.
+
+```{r}
+ftable(bn$T$prob,col.vars = 1)
+
+# P(T)
+querygrain(jt,nodes=c('T'),type='marginal')
+
+```
+
+Obtén la probabilidad de cada tipo de transporte relacionado con el sexo ¿es probabilidad condicionada?
+
+```{r}
+querygrain(jt,nodes=c('T','S'),type='conditional')
+```
+
+Obtén la probabilidad de cada tipo de transporte relacionado con el tamaño de la ciudad, R ¿es probabilidad condicionada?
+
+```{r}
+querygrain(jt,nodes=c('T','R'),type='conditional')
+```
+
+### Razonamiento con Evidencias
+
+P(T\|S=F)
+
+```{r}
+jt.SF <- setEvidence(jt,nodes='S',states='F') # cambiamos el junction tree para que las consultas las devuelva solo para mujeres
+querygrain(jt.SF,nodes=c('T'),type='marginal')
+
+```
+
+P(T\|R=small)
+
+```{r}
+jt.Rsmall <- setEvidence(jt,nodes='R',states='small')
+querygrain(jt.Rsmall,nodes=c('T'),type='marginal')
+```
+
+P(S,T\|E=high)
+
+```{r}
+jt.Ehigh <- setEvidence(jt,nodes='E',states='high')
+querygrain(jt.Ehigh,nodes=c('S','T'),type='joint')
+```
+
+P(S=M\|T=train,E=high)=?¿P(S=M\|E=high)
+
+```{r}
+jt.TE <- setEvidence(jt,nodes=c('T','E'),states=c('train','high'))
+
+querygrain(jt.TE,nodes='S',type='joint')
+querygrain(jt.Ehigh,nodes='S',type='marginal')
+```
+
+```{r}
+querygrain(jt.Ehigh,nodes=c('T','S'),type='conditional')
+
+```
+
+
+
+

@@ -1,0 +1,9 @@
+"0","```r
+jt.SF <- setEvidence(jt,nodes='S',states='F') # cambiamos el junction tree para que las consultas las devuelva solo para mujeres
+querygrain(jt.SF,nodes=c('T'),type='marginal')
+```"
+"1","$T
+T
+      car     train     other 
+0.5620577 0.2806144 0.1573280 
+"

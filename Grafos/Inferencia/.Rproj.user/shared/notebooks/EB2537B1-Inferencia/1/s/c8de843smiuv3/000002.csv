@@ -1,0 +1,9 @@
+"0","```r
+jt.Rsmall <- setEvidence(jt,nodes='R',states='small')
+querygrain(jt.Rsmall,nodes=c('T'),type='marginal')
+```"
+"1","$T
+T
+       car      train      other 
+0.48388675 0.41708494 0.09902831 
+"

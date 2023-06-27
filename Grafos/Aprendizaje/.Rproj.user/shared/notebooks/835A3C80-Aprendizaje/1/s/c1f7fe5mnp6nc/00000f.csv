@@ -1,0 +1,4 @@
+"0","dag<-model2network(""[A][S][E|A:S][O|E][R|E][T|O:R]"")"
+"0","arc.strng<-arc.strength(dag, data=survey, criterios=""x2"")"
+"2","Warning: unused argument(s): 'criterios'."
+"0","arc.strng[order(-arc.strng$strength),]"

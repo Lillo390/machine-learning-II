@@ -1,0 +1,9 @@
+"0","```r
+jt.Ehigh <- setEvidence(jt,nodes='E',states='high')
+querygrain(jt.Ehigh,nodes=c('S','T'),type='joint')
+```"
+"1","   T
+S         car     train      other
+  M 0.3426644 0.1736599 0.09623271
+  F 0.2167356 0.1098401 0.06086729
+"

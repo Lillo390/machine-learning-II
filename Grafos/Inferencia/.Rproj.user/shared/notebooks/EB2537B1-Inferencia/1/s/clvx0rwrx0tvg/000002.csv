@@ -1,0 +1,10 @@
+"0","```r
+querygrain(jt,nodes=c('T','S'),type='conditional')
+
+```"
+"1","       S
+T               M         F
+  car   0.5616848 0.5620577
+  train 0.2810192 0.2806144
+  other 0.1572960 0.1573280
+"

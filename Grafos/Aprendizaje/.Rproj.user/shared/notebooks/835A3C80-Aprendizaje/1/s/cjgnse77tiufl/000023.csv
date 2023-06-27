@@ -1,0 +1,7 @@
+"0","library(bnlearn)"
+"0","set.seed(666)"
+"0","dag<-model2network(""[A][S][E|A:S][O|E][R|E][T|O:R]"")"
+"0","data<-survey"
+"0","graph.gs <- gs(data,test='mi',debug=F, alpha=0.1)"
+"0","library(Rgraphviz)"
+"0","graphviz.plot(graph.gs)"

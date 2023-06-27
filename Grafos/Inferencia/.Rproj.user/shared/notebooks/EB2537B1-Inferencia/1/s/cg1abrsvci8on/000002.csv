@@ -1,0 +1,9 @@
+"0","```r
+querygrain(jt.Ehigh,nodes='S',type='marginal')
+
+```"
+"1","$S
+S
+       M        F 
+0.612557 0.387443 
+"

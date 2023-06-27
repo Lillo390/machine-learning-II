@@ -1,0 +1,4 @@
+"0",""
+"0","#solution"
+"0","x <- sunspots"
+"0","hist(x,breaks=20,main=""Equal Interval Length"")"
